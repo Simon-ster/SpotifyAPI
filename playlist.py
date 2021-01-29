@@ -4,11 +4,11 @@ import spotipy
 import statistics as s
 import math
 from spotipy.oauth2 import SpotifyClientCredentials
-#from convertToJSON import convert
+import keys as k
 
 #Add your spotify developer client ID and client secret codes into these strings.
-CLIENT_ID=""
-CLIENT_SECRET=""
+CLIENT_ID=k.ID
+CLIENT_SECRET=k.SECRET
 
 #Lines 10-14 connect to the API. Don't worry about understanding this.
 token = spotipy.oauth2.SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
