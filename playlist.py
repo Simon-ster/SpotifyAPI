@@ -4,6 +4,7 @@ import spotipy
 import statistics as s
 import math
 from spotipy.oauth2 import SpotifyClientCredentials
+<<<<<<< HEAD
 #from convertToJSON import convert
 import keys as k
 
@@ -22,21 +23,17 @@ cache_token: object = token.get_access_token()
 ^^^ This creates an object of the access token ^^^
 print(cache_token) to make sure we're finding it
 """
-
+=======
+#Lines 10-14 connect to the API. Don't worry about understanding this.
 token = spotipy.oauth2.SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
 accessToken = token.get_access_token(as_dict=False)
 clientCredentialsManager = SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
 sp = spotipy.Spotify(client_credentials_manager=clientCredentialsManager)
 cache_token: object = token.get_access_token(as_dict=False)
 
-print(token)
-print(accessToken)
-print(clientCredentialsManager)
-print(sp)
-print(cache_token)
 
 """
-This module will get playlist tracks and track features
+This function will get playlist tracks and track features
 The data is organized in a dictionary 
 """
 indata = sp.playlist_tracks("6sMmJun3rrgXQwKJnsoNPO?si=xAwrEBknQR6gnC1CdOZoZg")
@@ -52,23 +49,27 @@ def getPlaylistData():
         jsonDict[track['track']['name']] = json.loads(response.text)
     return jsonDict
 
-#return the songs and song features for the playlist
+#Return the songs and song features for the playlist
 out = getPlaylistData()
 #print(out)
 
 
 
-# write to JSON file
+#Create a function to write the inData to JSON file.
 def writeToJSONFile(path, fileName, indata):
     filePathNameWExt = './' + path + '/' + fileName +'.json'
     with open (filePathNameWExt, 'w') as fp:
         json.dump(indata, fp, indent = 4)
-
+        
+#Create variables to assign to the JSON file.
 path = './'
 fileName = 'playlistData'
 data = out
 
+#Call the writeToJSONFile function.
 writeToJSONFile(path, fileName, data)
+
+#Sometimes we can comment block out code that would be useful for testing, but not necessary for everything.
 '''
 def get_energy():
     temp = data['Ghost Safari']
@@ -83,9 +84,7 @@ get_energy()
 save_energy
 '''
 
-
-#Creates a list with all energy values from a playlist and averages them with statistics.mean()
-
+#Create a function that will get playlist averages and print the output.
 def getAvgPlaylistData():
     energy = round(s.mean([data[track]['energy'] for track in data]), 3)
     valence = round(s.mean([data[track]['valence'] for track in data]), 3)
@@ -95,11 +94,13 @@ def getAvgPlaylistData():
     print("Average valence is: ", valence)
     print("Average tempo is: ", tempo)
     print("Average loudness is: ", loudness)
+
+#Call the function
 getAvgPlaylistData()
 songKey = s.mode([data[track]['key'] for track in data])
 
+#Create a function that will assign literal song keys to the coordinated number signature returned from the dictionary.
 def matchSongKey():
-    #the most frequently add music was #this scale#:
     songKeyShaper = {
         'C': 0,
         'C#': 1,
@@ -114,11 +115,15 @@ def matchSongKey():
         'A# / Bb': 10,
         'B': 11}
 
+#Create a for loop that pairs song keys and song modes and prints a statement with your matched output.
     for key, match in songKeyShaper.items():
         if match == songKey: print("The key is: ", key)
+            
+#Call the match song key function.
+matchSongKey()
 
-#matchSongKey()
-
+#Try to create a dictionary that will map song keys to HTML color codes.
+#Could be useful for data visualizations.
 songKeyColor = {
           0: '#f00',
           1: '#90f',
@@ -132,7 +137,3 @@ songKeyColor = {
           9: '#3d3',
          10: '#b68',
          11: '#9df'}
-
-
-
-#print(energy, valence, tempo, loudness, key)
