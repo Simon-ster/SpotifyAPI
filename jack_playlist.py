@@ -104,7 +104,7 @@ while count != 2:
 
     modality = (s.mode([data[track]['mode'] for track in data]), 3)
     if modality == 0:
-            songMode = 'Minor'
+        songMode = 'Minor'
     else:
         songMode = 'Major'
 
