@@ -5,10 +5,10 @@ import statistics as s
 import math
 from spotipy.oauth2 import SpotifyClientCredentials
 #from convertToJSON import convert
+import keys as k
 
-CLIENT_ID=""
-CLIENT_SECRET=""
-
+CLIENT_ID= k.ID
+CLIENT_SECRET= k.SECRET
 """
 Using spotipy, another API, we can authenticate Spotify accounts using Oauth2
 
@@ -24,10 +24,10 @@ print(cache_token) to make sure we're finding it
 """
 
 token = spotipy.oauth2.SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
-accessToken = token.get_access_token()
+accessToken = token.get_access_token(as_dict=False)
 clientCredentialsManager = SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
 sp = spotipy.Spotify(client_credentials_manager=clientCredentialsManager)
-cache_token: object = token.get_access_token()
+cache_token: object = token.get_access_token(as_dict=False)
 
 print(token)
 print(accessToken)

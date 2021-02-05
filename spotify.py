@@ -6,10 +6,10 @@ CLIENT_ID=""
 CLIENT_SECRET=""
 
 token = spotipy.oauth2.SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
-accessToken = token.get_access_token()
+accessToken = token.get_access_token(as_dict=False)
 clientCredentialsManager = SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
 sp = spotipy.Spotify(client_credentials_manager=clientCredentialsManager)
-cache_token: object = token.get_access_token()
+cache_token: object = token.get_access_token(as_dict=False)
 
 """
 print(token)
