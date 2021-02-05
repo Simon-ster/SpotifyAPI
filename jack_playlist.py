@@ -25,9 +25,9 @@ The data is organized in a dictionary
 count = 0
 while count != 2:
     if count > 0 :
-        indata = input('\nPlease enter the second playlist URL: ')
+        indata = input('\nPlease enter the second playlist URL or URI playlist link: ')
     else:
-        indata = input('\nPlease enter the first playlist URL: ')
+        indata = input('\nPlease enter the first playlist URL or URI playlist link: ')
 
     def getPlaylist(indata):
         indata = indata.replace('https://open.spotify.com/playlist/', '')
