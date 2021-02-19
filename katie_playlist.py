@@ -57,8 +57,7 @@ def writeToJSONFile(path, fileName, indata):
         json.dump(indata, fp, indent=4)
 
 
-count = 1
-while count < 3:
+for count in range(2):
     while True:
         try:
             # Enter link or URI to playlist
@@ -71,9 +70,10 @@ while count < 3:
 
     # name the output file and write to it
     path = './'
-    file = input('\nFilename for playlist ' + str(count) + ': ')
+    file = input('\nFilename for playlist ' + str(count + 1) + ': ')
     writeToJSONFile(path, file, features)
     count += 1
+
 
 
 # Sometimes we can comment block out code that would be useful for testing, but not necessary for everything.
