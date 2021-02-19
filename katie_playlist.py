@@ -27,18 +27,14 @@ The data is organized in a dictionary
 
 # Create a function to gather the input of a spotify songs URI (Uniform Resource Identifier).
 
+# TODO: Make getURI this reprompt if not a URI or URL
+# spotify:playlist:37i9dQZF1DXcBWIGoYBM5M
+
 
 def getURI():
     URI = sp.playlist_tracks(
-        input('\nCopy the Spotify URI of your playlist and paste it here: '))
+        input('\nCopy the Spotify URI or Link of your playlist and paste it here: '))
     return URI
-
-
-# Call the function and add it to a varaible called inData.
-# indata = sp.playlist_tracks(
-    # input('\nCopy the Spotify URI of your playlist and paste it here: '))
-# indata = getURI()
-# get playlist tracks and track data
 
 
 def getPlaylistData(playlist):
@@ -52,41 +48,33 @@ def getPlaylistData(playlist):
         jsonDict[track['track']['name']] = json.loads(response.text)
     return jsonDict
 
-
-# Return the songs and song features for the playlist
-# out = getPlaylistData()
-# print(out)
-
-
 # Create a function to write the inData to JSON file.
+
+
 def writeToJSONFile(path, fileName, indata):
     filePathNameWExt = './' + path + '/' + fileName + '.json'
     with open(filePathNameWExt, 'w') as fp:
         json.dump(indata, fp, indent=4)
 
 
-# Create variables to assign to the JSON file.
-# path = './'
-# fileName = 'playlistData'
-# data = out
+count = 1
+while count < 3:
+    while True:
+        try:
+            # Enter link or URI to playlist
+            playlist = getURI()
+            # Return songs and features for the playlists
+            features = getPlaylistData(playlist)
+            break
+        except Exception as e:
+            print('\n Invalid link or URI, please retry')
 
-# Call the writeToJSONFile function.
-# writeToJSONFile(path, fileName, data)
+    # name the output file and write to it
+    path = './'
+    file = input('\nFilename for playlist ' + str(count) + ': ')
+    writeToJSONFile(path, file, features)
+    count += 1
 
-# Enter two playlists
-playlist1 = getURI()
-playlist2 = getURI()
-
-# Return songs and features for the playlists
-features1 = getPlaylistData(playlist1)
-features2 = getPlaylistData(playlist2)
-
-# Name the output file
-path = './'
-file1 = input('\nFilename for playlist 1: ')
-file2 = input('\nFilename for playlist 2: ')
-writeToJSONFile(path, file1, features1)
-writeToJSONFile(path, file2, features2)
 
 # Sometimes we can comment block out code that would be useful for testing, but not necessary for everything.
 '''
