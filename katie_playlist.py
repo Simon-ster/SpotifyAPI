@@ -19,24 +19,29 @@ clientCredentialsManager = SpotifyClientCredentials(
 sp = spotipy.Spotify(client_credentials_manager=clientCredentialsManager)
 cache_token: object = token.get_access_token(as_dict=False)
 
+#Assigns literal song keys to the coordinated number signature returned from the dictionary.
+songKeyShaper = {
+    'C': 0,
+    'C#': 1,
+    'D': 2,
+    'D# / Eb': 3,
+    'E': 4,
+    'F': 5,
+    'F# / Gb': 6,
+    'G': 7,
+    'G#': 8,
+    'A': 9,
+    'A# / Bb': 10,
+    'B': 11}
 
-"""
-This function will get playlist tracks and track features
-The data is organized in a dictionary
-"""
 
 # Create a function to gather the input of a spotify songs URI (Uniform Resource Identifier).
-
-# TODO: Make getURI this reprompt if not a URI or URL
-# spotify:playlist:37i9dQZF1DXcBWIGoYBM5M
-
-
-def getURI():
-    URI = sp.playlist_tracks(
-        input('\nCopy the Spotify URI or Link of your playlist and paste it here: '))
+def getURI(entry):
+    URI = sp.playlist_tracks(entry)
     return URI
 
-
+#This function will get playlist tracks and track features
+#The data is organized in a dictionary
 def getPlaylistData(playlist):
     jsonDict = {}
 
@@ -49,104 +54,84 @@ def getPlaylistData(playlist):
     return jsonDict
 
 # Create a function to write the inData to JSON file.
-
-
-def writeToJSONFile(path, fileName, indata):
-    filePathNameWExt = './' + path + '/' + fileName + '.json'
+def writeToJSONFile(fileName, indata):
+    filePathNameWExt = './' + fileName +'.json'
     with open(filePathNameWExt, 'w') as fp:
         json.dump(indata, fp, indent=4)
 
 
-for count in range(2):
-    while True:
-        try:
-            # Enter link or URI to playlist
-            playlist = getURI()
-            # Return songs and features for the playlists
-            features = getPlaylistData(playlist)
-            break
-        except Exception as e:
-            print('\n Invalid link or URI, please retry')
-
-    # name the output file and write to it
-    path = './'
-    file = input('\nFilename for playlist ' + str(count + 1) + ': ')
-    writeToJSONFile(path, file, features)
-    count += 1
-
-
-
-# Sometimes we can comment block out code that would be useful for testing, but not necessary for everything.
-'''
-def get_energy():
-    temp = data['Ghost Safari']
-    for question_data in temp:
-        replies_access = question_data['items']
-        for replies_data in replies_access:
-            energy = replies_data['track']['energy']
-            save_energy.append(energy)
-save_energy = []
-get_energy()
-save_energy
-'''
-
 # Create a function that will get playlist averages and print the output.
-
-
-def getAvgPlaylistData():
+def getAvgPlaylistData(data):
     energy = round(s.mean([data[track]['energy'] for track in data]), 3)
     valence = round(s.mean([data[track]['valence'] for track in data]), 3)
     tempo = round(s.mean([data[track]['tempo'] for track in data]), 3)
-    loudness = round(s.mean([data[track][' loudness'] for track in data]), 3)
-    print("Average energy is: ", energy)
-    print("Average valence is: ", valence)
-    print("Average tempo is: ", tempo)
-    print("Average loudness is: ", loudness)
+    loudness = (round(s.mean([data[track]['loudness'] for track in data]), 3) * -1)
+    danceability = round(s.mean([data[track]['danceability'] for track in data]), 3)
 
+    #Find the song key that occurs the most frequently
+    songKey = s.mode([data[track]['key'] for track in data])
 
-# Call the function
-# # getAvgPlaylistData()
-# songKey1 = s.mode([features1[track]['key'] for track in features1])
-# songKey2 = s.mode([features2[track]['key'] for track in features2])
-# Create a function that will assign literal song keys to the coordinated number signature returned from the dictionary.
+    modality = (s.mode([data[track]['mode'] for track in data]), 3)
+    if modality == 0:
+        songMode = 'Minor'
+    else:
+        songMode = 'Major'
 
-
-def matchSongKey(songKey):
-    songKeyShaper = {
-        'C': 0,
-        'C#': 1,
-        'D': 2,
-        'D# / Eb': 3,
-        'E': 4,
-        'F': 5,
-        'F# / Gb': 6,
-        'G': 7,
-        'G#': 8,
-        'A': 9,
-        'A# / Bb': 10,
-        'B': 11}
-
-# Create a for loop that pairs song keys and song modes and prints a statement with your matched output.
     for key, match in songKeyShaper.items():
         if match == songKey:
-            print("The key is: ", key)
+            songKey = key
+
+    return energy, valence, tempo, loudness, danceability, songKey, songMode
+    '''
+    print('Average energy is:', energy)
+    print('Average valence is:', valence)
+    print('Average tempo is:', tempo)
+    print('Average loudness is:', loudness)
+    #Create a for loop that pairs song keys and song modes and prints a statement with your matched output.
+    for key, match in songKeyShaper.items():
+        if match == songKey: print("The most common key is:", key)
+    print("The most common modality is:", songMode, '\n')
 
 
-# Call the match song key function.
-# matchSongKey()
+def run():
+    print('\nAverage data for playlist 1:')
+    getAvgPlaylistData(features1)
+    print('Average data for playlist 2:')
+    getAvgPlaylistData(features2)
 
-# Try to create a dictionary that will map song keys to HTML color codes.
-# Could be useful for data visualizations.
-songKeyColor = {
-    0: '#f00',
-    1: '#90f',
-    2: '#ff0',
-    3: '#c49',
-    4: '#cff',
-    5: '#b03',
-    6: '#89f',
-    7: '#f80',
-    8: '#c7f',
-    9: '#3d3',
-    10: '#b68',
-    11: '#9df'}
+    input('\nPress ENTER to quit')
+
+if __name__ == "__main__":
+    # Enter two playlists
+    print('\nFIRST PLAYLST')
+    playlist1 = getURI()
+    print('\nSECOND PLAYLIST')
+    playlist2 = getURI()
+
+    # Return songs and features for the playlists
+    features1 = getPlaylistData(playlist1)
+    features2 = getPlaylistData(playlist2)
+
+    # Name the output file
+    path = './'
+    file1 = input('\nFilename for playlist 1: ')
+    file2 = input('\nFilename for playlist 2: \n')
+    writeToJSONFile(path, file1, features1)
+    writeToJSONFile(path, file2, features2)
+
+    # Try to create a dictionary that will map song keys to HTML color codes.
+    # Could be useful for data visualizations.
+    songKeyColor = {
+        0: '#f00',
+        1: '#90f',
+        2: '#ff0',
+        3: '#c49',
+        4: '#cff',
+        5: '#b03',
+        6: '#89f',
+        7: '#f80',
+        8: '#c7f',
+        9: '#3d3',
+        10: '#b68',
+        11: '#9df'}
+    '''
